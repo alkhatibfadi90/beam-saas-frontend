@@ -10,19 +10,22 @@ on:
       - main
 
 jobs:
-  build_and_deploy_job:
-    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
+  build:
     runs-on: ubuntu-latest
-    name: Build and Deploy Job
     steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: true
-          lfs: false
-      - name: Set Node.js version
-        uses: actions/setup-node@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Ensure Git Config Write Permissions
+        run: |
+          sudo chmod -R u+w .git/config
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: '20.9.0'
+
+      # Add other steps here as required
 
       - name: Build And Deploy
         id: builddeploy
@@ -49,5 +52,6 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_AMBITIOUS_CLIFF_0A422B900 }}
           action: "close"
+
 
 
